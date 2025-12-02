@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GAS Project Launcher</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f4f4f4;
+            color: #333;
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #0056b3;
+            margin-bottom: 20px;
+        }
+
+        p {
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        .input-container {
+            display: flex;
+            margin-bottom: 20px;
+        }
+
+        #deploymentId {
+            box-sizing: border-box;
+            flex-grow: 1;
+            padding: 0 10px;
+            height: 40px;
+            border: 1px solid #ddd;
+            border-radius: 4px 0 0 4px;
+            font-size: 16px;
+            border-right: none;
+        }
+
+        button {
+            background-color: #007bff;
+            color: #fff;
+            padding: 0 25px;
+            height: 40px;
+            border: none;
+            border-radius: 0 4px 4px 0;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color .3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .result-container {
+            margin-top: 20px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            word-break: break-all;
+        }
+
+        #generatedLink {
+            color: #0056b3;
+            text-decoration: none;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .copy-button {
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 5px;
+            margin-left: 10px;
+            border-radius: 4px;
+        }
+
+        .copy-icon {
+            width: 20px;
+            height: 20px;
+            fill: #ccc;
+            vertical-align: middle;
+        }
+
+        #copy-message {
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #333;
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Приложения Google Apps Script</h1>
+        <p>Добро пожаловать! Этот простой интерфейс позволяет вам получить доступ к вашим развернутым приложениям Google
+            Apps Script. Введите идентификатор развертывания (Deployment ID) вашего скрипта ниже и нажмите "Создать",
+            чтобы получить ссылку.</p>
+        <div class="input-container">
+                <input id="deploymentId" placeholder="Введите Deployment ID или URL проекта">
+                <button onclick="generateLink()">Создать</button>
+            </div>
+
+        <div id="result" class="result-container">
+            <a id="generatedLink" href="#" target="_blank" rel="noopener noreferrer"></a>
+            <button class="copy-button" onclick="copyLink()" title="Копировать ссылку">
+                <svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <path
+                        d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" />
+                </svg>
+            </button>
+            <div id="copy-message">Ссылка скопирована!</div>
+        </div>
+    </div>
+    <div class="footer">
+        <p>Для получения дополнительной информации о развертывании Google Apps Script посетите официальную документацию
+            Google.</p>
+    </div>
+
+    <script>
+        function generateLink() {
+            let userInput = document.getElementById("deploymentId").value.trim();
+            let deploymentId = '';
+
+            if (userInput) {
+                const urlRegex = /https:\/\/script\.google\.com\/macros\/s\/([a-zA-Z0-9-_]+)\/(exec|dev)/;
+                const match = userInput.match(urlRegex);
+
+                if (match && match[1]) {
+                    deploymentId = match[1];
+                } else {
+                    deploymentId = userInput;
+                }
+
+                const newUrl = window.location.origin + "/gas-twa/" + deploymentId + '/twa';
+                const resultContainer = document.getElementById("result");
+                const generatedLinkA = document.getElementById("generatedLink");
+
+                generatedLinkA.href = newUrl;
+                generatedLinkA.textContent = newUrl;
+                resultContainer.style.display = "flex";
+
+            } else {
+                alert("Пожалуйста, введите идентификатор развертывания или URL.");
+            }
+        }
+
+        function copyLink() {
+            const linkText = document.getElementById("generatedLink").href;
+            navigator.clipboard.writeText(linkText).then(() => {
+                const copyMessage = document.getElementById("copy-message");
+                copyMessage.style.opacity = "1";
+                setTimeout(() => {
+                    copyMessage.style.opacity = "0";
+                }, 2000);
+            }, (err) => {
+                alert("Не удалось скопировать ссылку: " + err);
+            });
+        }
+
+        document.getElementById("deploymentId").addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                event.preventDefault(); // Prevent the default action (form submission)
+                generateLink();
+            }
+        });
+    </script>
+</body>
+
+</html>

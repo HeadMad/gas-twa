@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0">
+   <title></title>
+  <style>
+    /* Убираем отступы у body, чтобы iframe занимал всё пространство */
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="loader" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #f0f0f0; display: flex; justify-content: center; align-items: center; font-size: 24px; z-index: 9999;">Loading...</div>
+  <iframe id="gas" style="width: 100vw; height: 100vh; border: none; margin: 0; padding: 0; display: block;" allow="accelerometer *; ambient-light-sensor *; autoplay *; camera *; clipboard-read *; clipboard-write *; encrypted-media *; fullscreen *; geolocation *; gyroscope *; magnetometer *; microphone *; midi *; payment *; picture-in-picture *; screen-wake-lock *; speaker *; sync-xhr *; usb *; web-share *; vibrate *; vr *" sandbox="allow-downloads allow-forms allow-modals allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts allow-top-navigation-by-user-activation allow-storage-access-by-user-activation"  src="" title="" onload="loader.style.display='none'"></iframe>
+  <script>
+    const isTwa = location.pathname.startsWith('/gas/twa/');
+    let [id, path = ''] = location.pathname.substring(5).replace('/', ' /').split(' ');
+    let src = 'https://script.google.com/macros/s/' + id + '/exec' + path;
+
+    src += location.hash.replace('#', '?') + location.search.replace('?', '&');
+    gas.src = src;
+
+    window.addEventListener("message", function (event) {
+      const handlers = {
+        title(text) {
+          document.title = text;
+          gas.title = text;
+        },
+        favicon(url) {
+          const link = document.createElement("link");
+          link.rel = "icon";
+          link.href = url;
+          document.head.appendChild(link);
+        },
+        href(link) {
+          window.location.href = link;
+        }
+      };
+      for (let key in event.data)
+        if (key in handlers)
+          handlers[key](event.data[key]);
+    });
+
+  </script>
+</body>
+
+</html>
