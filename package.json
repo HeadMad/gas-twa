@@ -14,7 +14,7 @@
   "scripts": {
     "dev": "node build.js --dev",
     "build": "node build.js",
-    "build-wrap": "node build.js --build --config=wrap/config.json",
+    "build-wrap": "node build.js --build --config=pages/config.json",
     "push": "node build.js --push",
     "deploy": "node build.js --deploy"
   },

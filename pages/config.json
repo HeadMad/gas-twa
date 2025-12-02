@@ -1,6 +1,6 @@
 {
   "package": "../package.json",
-  "outDir": "dist",
+  "outDir": "html",
 
   "frontend": {
     "build": true,
