@@ -1,0 +1,36 @@
+{
+  "clasp": {
+    "scriptId": "YOUR_SCRIPT_ID",
+    "rootDir": "."
+  },
+
+  "manifest": "src/appsscript.json",
+  "package": "./package.json",
+  "outDir": "dist",
+
+  "frontend": {
+    "build": true,
+    "src": "src/frontend",
+    "minify": true,
+    "include": []
+  },
+
+  "backend": {
+    "build": true,
+    "src": "src/backend",
+
+    "concatenate": false,
+    "outFile": "Code.js",
+    "priorityOrder": [],
+
+    "minify": true,
+    "include": []
+  },
+
+  "deployment": {
+    "devDeploymentId": "",
+    "prodDeploymentId": ""
+  },
+  
+  "message": "Links to deployments: \n    DEV: https://script.google.com/macros/s/{dev_id}/dev \n    PROD: https://script.google.com/macros/s/{prod_id}/exec"
+}
